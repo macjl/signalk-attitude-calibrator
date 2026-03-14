@@ -1,0 +1,19 @@
+{
+  "name": "signalk-attitude-calibrator",
+  "version": "0.1.0",
+  "description": "Applies fixed offsets (in radians) to navigation.attitude pitch, roll and yaw",
+  "main": "index.js",
+  "keywords": [
+    "signalk-node-server-plugin"
+  ],
+  "author": "Jean-Laurent Girod",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macjl/signalk-attitude-calibrator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/macjl/signalk-attitude-calibrator/issues"
+  },
+  "homepage": "https://github.com/macjl/signalk-attitude-calibrator#readme"
+}
