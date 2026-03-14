@@ -45,8 +45,13 @@ Restart SignalK after installation, then configure via **Server → Plugin Confi
 
 ## Changelog
 
+### 0.1.1
+- Added optional source filter to limit calibration to a specific source label
+- Added anti-loop guard to prevent processing the plugin's own output
+- Improved package description
+
 ### 0.1.0
-- Initial release: pitch/roll/yaw offset calibration, optional source filter, anti-loop guard
+- Initial release: pitch/roll/yaw offset calibration in radians
 
 ## License
 

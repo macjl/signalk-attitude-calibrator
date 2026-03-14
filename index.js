@@ -13,6 +13,12 @@ module.exports = function (app) {
   plugin.schema = {
     type: 'object',
     properties: {
+      sourceFilter: {
+        type: 'string',
+        title: 'Source filter (optional)',
+        description: 'Only calibrate values from this source label. Leave empty to calibrate all sources.',
+        default: ''
+      },
       pitchOffset: {
         type: 'number',
         title: 'Pitch offset (rad)',
@@ -35,11 +41,12 @@ module.exports = function (app) {
   };
 
   plugin.start = function (options) {
-    const pitchOffset = options.pitchOffset || 0;
-    const rollOffset  = options.rollOffset  || 0;
-    const yawOffset   = options.yawOffset   || 0;
+    const pitchOffset  = options.pitchOffset  || 0;
+    const rollOffset   = options.rollOffset   || 0;
+    const yawOffset    = options.yawOffset    || 0;
+    const sourceFilter = options.sourceFilter ? options.sourceFilter.trim() : '';
 
-    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad`);
+    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad, source=${sourceFilter || '(all)'}`);
 
     // Declare units metadata
     app.handleMessage(plugin.id, {
@@ -63,6 +70,12 @@ module.exports = function (app) {
       err => app.error('Subscription error: ' + err),
       delta => {
         delta.updates.forEach(update => {
+          // Ignore our own output to prevent feedback loop
+          if (update.source && update.source.label === plugin.id) return;
+
+          // Apply source filter if configured
+          if (sourceFilter && update.source && update.source.label !== sourceFilter) return;
+
           update.values.forEach(item => {
             if (item.path === 'navigation.attitude' && item.value) {
               const src = item.value;
