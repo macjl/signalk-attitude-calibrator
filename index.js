@@ -16,7 +16,7 @@ module.exports = function (app) {
       sourceFilter: {
         type: 'string',
         title: 'Source filter (optional)',
-        description: 'Only calibrate values from this source label. Leave empty to calibrate all sources.',
+        description: 'Only calibrate values from this source. Use the full source identifier as shown in the Data Browser (e.g. "signalk-attitude-converter.0"). Leave empty to calibrate all sources.',
         default: ''
       },
       pitchOffset: {
@@ -73,8 +73,8 @@ module.exports = function (app) {
           // Ignore our own output to prevent feedback loop
           if (update.source && update.source.label === plugin.id) return;
 
-          // Apply source filter if configured
-          if (sourceFilter && update.source && update.source.label !== sourceFilter) return;
+          // Apply source filter if configured ($source matches what the Data Browser displays)
+          if (sourceFilter && update.$source !== sourceFilter) return;
 
           update.values.forEach(item => {
             if (item.path === 'navigation.attitude' && item.value) {
