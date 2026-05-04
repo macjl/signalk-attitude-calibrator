@@ -61,7 +61,7 @@ module.exports = function (app) {
 
     const subscription = {
       context: 'vessels.self',
-      subscribe: [{ path: 'navigation.attitude' }]
+      subscribe: [{ path: 'navigation.attitude', sourcePolicy: 'all' }]
     };
 
     app.subscriptionmanager.subscribe(
