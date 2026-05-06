@@ -1,0 +1,34 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [0.3.0] - 2026-05-06
+
+### Added
+- Subscribe with `sourcePolicy: 'all'` to receive deltas from non-priority sources — allows calibrating attitude data from any sensor even when another source holds priority on `navigation.attitude`. The plugin's own calibrated output remains a priority source.
+
+## [0.2.1] - 2025-04-01
+
+### Changed
+- Minimum Node.js version declared: `>=18`
+- Standardized npm publish workflow
+
+## [0.2.0] - 2025-03-01
+
+### Fixed
+- Source filter now correctly matches the `$source` identifier as displayed in the Signal K Data Browser (e.g. `signalk-attitude-converter.0`)
+
+## [0.1.1] - 2025-01-15
+
+### Added
+- Optional source filter to limit calibration to a specific source label
+- Anti-loop guard to prevent processing the plugin's own output
+
+### Changed
+- Improved package description
+
+## [0.1.0] - 2025-01-01
+
+### Added
+- Initial release: pitch/roll/yaw offset calibration in radians
