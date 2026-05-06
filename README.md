@@ -45,6 +45,15 @@ Restart SignalK after installation, then configure via **Server → Plugin Confi
 
 ## Changelog
 
+### 0.3.0
+- Subscribe with `sourcePolicy: 'all'` to receive deltas from non-priority sources — allows calibrating data from any sensor even when another source holds priority on `navigation.attitude`
+
+### 0.2.1
+- Minimum Node.js version declared: `>=18`
+
+### 0.2.0
+- Fixed source filter to correctly match the `$source` identifier as displayed in the Signal K Data Browser (e.g. `signalk-attitude-converter.0`)
+
 ### 0.1.1
 - Added optional source filter to limit calibration to a specific source label
 - Added anti-loop guard to prevent processing the plugin's own output

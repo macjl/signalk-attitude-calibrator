@@ -1,6 +1,6 @@
 {
   "name": "signalk-attitude-calibrator",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "SignalK plugin that applies configurable pitch, roll and yaw offsets (in radians) to navigation.attitude. Supports source filtering and publishes calibrated values as a distinct source to preserve the original data.",
   "main": "index.js",
   "keywords": [
