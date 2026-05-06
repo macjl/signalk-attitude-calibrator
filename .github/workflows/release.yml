@@ -1,4 +1,4 @@
-name: Create Release
+name: Release & Publish
 
 on:
   push:
@@ -13,12 +13,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Sync package.json version with tag
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "$VERSION" != "$CURRENT" ]; then
+            npm version "$VERSION" --no-git-tag-version
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git add package.json package-lock.json 2>/dev/null || git add package.json
+            git commit -m "Sync package version with release tag $VERSION"
+            git push origin HEAD:${{ github.event.repository.default_branch }}
+          else
+            echo "Version already at $VERSION, skipping sync"
+          fi
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Extract changelog section
         id: changelog
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          # Extract the block between ## [X.Y.Z] and the next ## [
           NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
           {
             echo "notes<<EOF"
@@ -30,3 +60,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.changelog.outputs.notes }}
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
