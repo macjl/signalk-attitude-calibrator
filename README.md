@@ -11,6 +11,7 @@ A feedback loop guard prevents the plugin from processing its own output.
 | Option | Description | Default |
 |--------|-------------|---------|
 | Source filter | Only calibrate values from this source label. Leave empty to calibrate all sources. | *(all)* |
+| When no source filter is set | Subscribe to all sources, or only the preferred source. When a source filter is configured, the plugin always subscribes to all sources so the selected source cannot be missed. | `All sources` |
 | Pitch offset (rad) | Value added to pitch. Positive = bow up. | `0` |
 | Roll offset (rad) | Value added to roll. Positive = starboard down. | `0` |
 | Yaw offset (rad) | Value added to yaw. | `0` |
@@ -20,9 +21,11 @@ A feedback loop guard prevents the plugin from processing its own output.
 At each update received on `navigation.attitude`:
 
 1. The source label is checked — updates from the plugin itself are ignored (anti-loop guard)
-2. If a source filter is configured, updates from other sources are skipped
+2. If a source filter is configured, the subscription listens to all sources and updates from other sources are skipped
 3. The offsets are applied: `calibrated = source_value + offset`
 4. The result is published on `navigation.attitude` with `source.label = signalk-attitude-calibrator`
+
+Without a source filter, the subscription can either receive all sources or only the preferred source, depending on the configured source mode.
 
 ## Units
 

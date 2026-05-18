@@ -19,6 +19,14 @@ module.exports = function (app) {
         description: 'Only calibrate values from this source. Use the full source identifier as shown in the Data Browser (e.g. "signalk-attitude-converter.0"). Leave empty to calibrate all sources.',
         default: ''
       },
+      noSourceFilterMode: {
+        type: 'string',
+        title: 'When no source filter is set',
+        description: 'Choose which sources to subscribe to when no specific source filter is configured. If a source filter is set, all sources are always subscribed to so the selected source cannot be missed.',
+        enum: ['all', 'preferred'],
+        enumNames: ['All sources', 'Preferred source only'],
+        default: 'all'
+      },
       pitchOffset: {
         type: 'number',
         title: 'Pitch offset (rad)',
@@ -45,8 +53,13 @@ module.exports = function (app) {
     const rollOffset   = options.rollOffset   || 0;
     const yawOffset    = options.yawOffset    || 0;
     const sourceFilter = options.sourceFilter ? options.sourceFilter.trim() : '';
+    const noSourceFilterMode =
+      options.noSourceFilterMode === 'preferred' || options.noSourceFilterMode === 'priority'
+        ? 'preferred'
+        : 'all';
+    const subscribeAllSources = Boolean(sourceFilter) || noSourceFilterMode === 'all';
 
-    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad, source=${sourceFilter || '(all)'}`);
+    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad, source=${sourceFilter || '(all)'}, sourcePolicy=${subscribeAllSources ? 'all' : 'preferred'}`);
 
     // Declare units metadata
     app.handleMessage(plugin.id, {
@@ -61,7 +74,7 @@ module.exports = function (app) {
 
     const subscription = {
       context: 'vessels.self',
-      sourcePolicy: 'all',
+      sourcePolicy: subscribeAllSources ? 'all' : 'preferred',
       subscribe: [{ path: 'navigation.attitude' }]
     };
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] - 2026-05-18
+
+### Added
+- Add a no-source-filter source mode: calibrate all `navigation.attitude` sources, or only the Signal K preferred source.
+
+### Changed
+- When a source filter is configured, the plugin always subscribes with `sourcePolicy: 'all'` so the selected non-preferred source can still be received.
+
 ## [0.3.0] - 2026-05-06
 
 ### Added
