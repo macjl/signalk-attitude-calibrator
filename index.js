@@ -13,19 +13,57 @@ module.exports = function (app) {
   plugin.schema = {
     type: 'object',
     properties: {
-      sourceFilter: {
-        type: 'string',
-        title: 'Source filter (optional)',
-        description: 'Only calibrate values from this source. Use the full source identifier as shown in the Data Browser (e.g. "signalk-attitude-converter.0"). Leave empty to calibrate all sources.',
-        default: ''
-      },
-      noSourceFilterMode: {
-        type: 'string',
-        title: 'When no source filter is set',
-        description: 'Choose which sources to subscribe to when no specific source filter is configured. If a source filter is set, all sources are always subscribed to so the selected source cannot be missed.',
-        enum: ['all', 'preferred'],
-        enumNames: ['All sources', 'Preferred source only'],
-        default: 'all'
+      source: {
+        type: 'object',
+        title: 'Source',
+        properties: {
+          mode: {
+            type: 'string',
+            title: 'Source mode',
+            description: 'Choose which navigation.attitude source updates to calibrate.',
+            enum: ['all', 'preferred', 'specific'],
+            enumNames: ['All sources', 'Preferred source only', 'Specific source'],
+            default: 'all'
+          }
+        },
+        dependencies: {
+          mode: {
+            oneOf: [
+              {
+                properties: {
+                  mode: {
+                    enum: ['all']
+                  }
+                }
+              },
+              {
+                properties: {
+                  mode: {
+                    enum: ['preferred']
+                  }
+                }
+              },
+              {
+                properties: {
+                  mode: {
+                    enum: ['specific']
+                  },
+                  specificSource: {
+                    type: 'string',
+                    title: 'Specific source',
+                    description: 'Full source identifier as shown in the Data Browser (e.g. "signalk-attitude-converter.0").',
+                    minLength: 1,
+                    default: ''
+                  }
+                },
+                required: ['specificSource']
+              }
+            ]
+          }
+        },
+        default: {
+          mode: 'all'
+        }
       },
       pitchOffset: {
         type: 'number',
@@ -48,18 +86,45 @@ module.exports = function (app) {
     }
   };
 
+  function getSourceConfiguration (options) {
+    const legacySourceFilter = options.sourceFilter ? options.sourceFilter.trim() : '';
+    const configuredMode = options.source && options.source.mode;
+    const legacyMode =
+      options.noSourceFilterMode === 'preferred' || options.noSourceFilterMode === 'priority'
+        ? 'preferred'
+        : 'all';
+
+    let mode = configuredMode || (legacySourceFilter ? 'specific' : legacyMode);
+
+    if (!['all', 'preferred', 'specific'].includes(mode)) {
+      mode = 'all';
+    }
+
+    const specificSource =
+      options.source && options.source.specificSource
+        ? options.source.specificSource.trim()
+        : legacySourceFilter;
+
+    return {
+      mode,
+      sourceFilter: mode === 'specific' ? specificSource : '',
+      hasValidSourceFilter: mode !== 'specific' || Boolean(specificSource),
+      sourcePolicy: mode === 'preferred' ? 'preferred' : 'all'
+    };
+  }
+
   plugin.start = function (options) {
     const pitchOffset  = options.pitchOffset  || 0;
     const rollOffset   = options.rollOffset   || 0;
     const yawOffset    = options.yawOffset    || 0;
-    const sourceFilter = options.sourceFilter ? options.sourceFilter.trim() : '';
-    const noSourceFilterMode =
-      options.noSourceFilterMode === 'preferred' || options.noSourceFilterMode === 'priority'
-        ? 'preferred'
-        : 'all';
-    const subscribeAllSources = Boolean(sourceFilter) || noSourceFilterMode === 'all';
+    const sourceConfig = getSourceConfiguration(options);
+    const sourceFilter = sourceConfig.sourceFilter;
 
-    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad, source=${sourceFilter || '(all)'}, sourcePolicy=${subscribeAllSources ? 'all' : 'preferred'}`);
+    app.debug(`Starting — offsets: pitch=${pitchOffset} roll=${rollOffset} yaw=${yawOffset} rad, sourceMode=${sourceConfig.mode}, source=${sourceFilter || '(all)'}, sourcePolicy=${sourceConfig.sourcePolicy}`);
+
+    if (!sourceConfig.hasValidSourceFilter) {
+      app.error('Specific source mode requires a non-empty source identifier');
+    }
 
     // Declare units metadata
     app.handleMessage(plugin.id, {
@@ -74,7 +139,7 @@ module.exports = function (app) {
 
     const subscription = {
       context: 'vessels.self',
-      sourcePolicy: subscribeAllSources ? 'all' : 'preferred',
+      sourcePolicy: sourceConfig.sourcePolicy,
       subscribe: [{ path: 'navigation.attitude' }]
     };
 
@@ -88,6 +153,7 @@ module.exports = function (app) {
           if (update.source && update.source.label === plugin.id) return;
 
           // Apply source filter if configured ($source matches what the Data Browser displays)
+          if (!sourceConfig.hasValidSourceFilter) return;
           if (sourceFilter && update.$source !== sourceFilter) return;
 
           update.values.forEach(item => {

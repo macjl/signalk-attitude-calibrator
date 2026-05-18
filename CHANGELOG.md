@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.0] - 2026-05-19
+
+### Changed
+- Replace the separate no-source-filter mode and source filter fields with a single Source mode selector: all sources, preferred source only, or specific source.
+- Show the specific source field only when Source mode is set to `Specific source`.
+- Keep compatibility with existing `sourceFilter` and `noSourceFilterMode` configurations.
+
 ## [0.4.0] - 2026-05-18
 
 ### Added
