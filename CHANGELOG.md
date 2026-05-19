@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Added
+- Add a Signal K webapp for live attitude calibration and pitch/roll zeroing.
+- Add plugin API routes for live state, offset updates and zero calibration.
+- Add webapp source mode configuration with a selector populated from observed attitude sources.
+- Point the Signal K plugin configuration panel to the richer calibration webapp.
+- Add an attitude-instrument icon for the webapp using Signal K's `appIcon` metadata.
+
 ## [0.5.0] - 2026-05-19
 
 ### Changed

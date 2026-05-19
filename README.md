@@ -8,6 +8,8 @@ A feedback loop guard prevents the plugin from processing its own output.
 
 ## Configuration
 
+The full calibration workflow is available in **Apps → Attitude Calibrator**. The plugin configuration panel also displays the webapp path and remains available as a manual fallback.
+
 | Option | Description | Default |
 |--------|-------------|---------|
 | Source mode | Choose between all sources, the preferred source only, or a specific source. | `All sources` |
@@ -41,6 +43,40 @@ Chain with `signalk-attitude-converter` to expose calibrated individual paths:
 
 1. **signalk-attitude-calibrator** — subscribes to `navigation.attitude` from your sensor source, applies offsets, republishes as `signalk-attitude-calibrator`
 2. **signalk-attitude-converter** (mode `object-to-values`, source filter = `signalk-attitude-calibrator`) — splits the calibrated object into individual `pitch`, `roll`, `yaw` paths
+
+## Calibration webapp
+
+The plugin includes a small Signal K webapp. Open **Apps → Attitude Calibrator** to monitor:
+
+- the raw `navigation.attitude` sample received by the plugin
+- the configured pitch, roll and yaw offsets
+- the calibrated `navigation.attitude` value published by the plugin
+- the configured source mode and source currently used by the plugin
+
+Values are shown in radians and degrees. When the vessel is in its reference attitude, use:
+
+- **Zero pitch** to set `pitchOffset = -current pitch`
+- **Zero roll** to set `rollOffset = -current roll`
+- **Zero pitch + roll** to set both at the same time
+
+The webapp writes the new offsets through the plugin API using Signal K plugin options, so changes are applied immediately and persisted for the next restart when the server supports `savePluginOptions`.
+
+The webapp also lists observed `navigation.attitude` sources and can save the plugin source mode:
+
+- **All sources**
+- **Preferred source only**
+- **Specific source**
+
+When **Specific source** is selected, choose one of the observed sources instead of copying the `$source` string manually.
+
+### Webapp API
+
+The webapp uses these plugin routes:
+
+- `GET /plugins/signalk-attitude-calibrator/api/state`
+- `PUT /plugins/signalk-attitude-calibrator/api/source`
+- `PUT /plugins/signalk-attitude-calibrator/api/offsets`
+- `POST /plugins/signalk-attitude-calibrator/api/zero`
 
 ## Installation
 

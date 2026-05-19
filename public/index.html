@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attitude Calibrator</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Attitude Calibrator</h1>
+        <p id="statusText">Waiting for plugin state</p>
+      </div>
+      <span id="runningBadge" class="badge">unknown</span>
+    </header>
+
+    <section class="panel source-panel">
+      <div class="source-summary">
+        <h2>Source</h2>
+        <dl class="source-grid">
+          <div>
+            <dt>Mode</dt>
+            <dd id="sourceMode">-</dd>
+          </div>
+          <div>
+            <dt>Policy</dt>
+            <dd id="sourcePolicy">-</dd>
+          </div>
+          <div>
+            <dt>Last source</dt>
+            <dd id="lastSource">-</dd>
+          </div>
+          <div>
+            <dt>Timestamp</dt>
+            <dd id="sourceTimestamp">-</dd>
+          </div>
+        </dl>
+      </div>
+      <form id="sourceForm" class="source-form">
+        <label>
+          <span>Mode</span>
+          <select id="sourceModeInput">
+            <option value="all">All sources</option>
+            <option value="preferred">Preferred source only</option>
+            <option value="specific">Specific source</option>
+          </select>
+        </label>
+        <label>
+          <span>Source</span>
+          <select id="specificSourceInput"></select>
+        </label>
+        <button type="submit">Apply source</button>
+      </form>
+    </section>
+
+    <section class="value-grid">
+      <article class="panel">
+        <h2>Raw attitude</h2>
+        <div class="metric-list" data-group="raw"></div>
+      </article>
+
+      <article class="panel">
+        <h2>Offsets</h2>
+        <div class="metric-list" data-group="offsets"></div>
+      </article>
+
+      <article class="panel">
+        <h2>Calibrated attitude</h2>
+        <div class="metric-list" data-group="calibrated"></div>
+      </article>
+    </section>
+
+    <section class="panel controls">
+      <div>
+        <h2>Zero calibration</h2>
+        <p id="actionMessage">Place the boat in the reference attitude, then zero pitch and roll.</p>
+      </div>
+      <div class="button-row">
+        <button type="button" data-zero="pitch">Zero pitch</button>
+        <button type="button" data-zero="roll">Zero roll</button>
+        <button type="button" data-zero="both" class="primary">Zero pitch + roll</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
