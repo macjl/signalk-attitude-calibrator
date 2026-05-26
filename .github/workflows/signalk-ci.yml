@@ -8,4 +8,4 @@ on:
 
 jobs:
   test:
-    uses: SignalK/signalk-server/blob/master/.github/workflows/plugin-ci.yml
+    uses: SignalK/signalk-server/.github/workflows/plugin-ci.yml@master
