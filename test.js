@@ -149,9 +149,21 @@ assert.strictEqual(
 );
 
 assert.strictEqual(
+  captureSubscription({ source: { mode: 'all' } }).excludeSelf,
+  undefined,
+  'all mode should not request excludeSelf because all-source subscriptions bypass the priority cascade'
+);
+
+assert.strictEqual(
   captureSubscription({ source: { mode: 'preferred' } }).sourcePolicy,
   'preferred',
   'preferred mode should request the Signal K preferred source policy'
+);
+
+assert.strictEqual(
+  captureSubscription({ source: { mode: 'preferred' } }).excludeSelf,
+  true,
+  'preferred mode should exclude this plugin from the preferred-source cascade'
 );
 
 assert.strictEqual(
@@ -166,9 +178,26 @@ assert.strictEqual(
 );
 
 assert.strictEqual(
+  captureSubscription({
+    source: {
+      mode: 'specific',
+      specificSource: 'signalk-attitude-converter.0'
+    }
+  }).excludeSelf,
+  undefined,
+  'specific source mode should not request excludeSelf because sourcePolicy all must remain in use'
+);
+
+assert.strictEqual(
   captureSubscription({ noSourceFilterMode: 'preferred' }).sourcePolicy,
   'preferred',
   'legacy preferred mode should still work'
+);
+
+assert.strictEqual(
+  captureSubscription({ noSourceFilterMode: 'preferred' }).excludeSelf,
+  true,
+  'legacy preferred mode should also exclude this plugin from the preferred-source cascade'
 );
 
 assert.strictEqual(
@@ -199,6 +228,26 @@ assert.strictEqual(
   emptySpecificSourceResult.messages.length,
   1,
   'empty specific source should only publish startup metadata'
+);
+
+const ownOutputResult = runDelta(
+  { source: { mode: 'preferred' } },
+  {
+    updates: [{
+      $source: 'signalk-attitude-calibrator',
+      source: { label: 'signalk-attitude-calibrator' },
+      values: [{
+        path: 'navigation.attitude',
+        value: { pitch: 1 }
+      }]
+    }]
+  }
+);
+
+assert.strictEqual(
+  ownOutputResult.messages.length,
+  1,
+  'own output should still be ignored locally for compatibility with servers without excludeSelf support'
 );
 
 const harness = createRouterHarness({

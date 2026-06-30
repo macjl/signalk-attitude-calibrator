@@ -409,6 +409,9 @@ module.exports = function (app) {
       sourcePolicy: sourceConfig.sourcePolicy,
       subscribe: [{ path: 'navigation.attitude' }]
     };
+    if (sourceConfig.sourcePolicy === 'preferred') {
+      subscription.excludeSelf = true;
+    }
 
     app.subscriptionmanager.subscribe(
       subscription,
