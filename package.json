@@ -9,7 +9,10 @@
   ],
   "signalk": {
     "displayName": "Attitude Calibrator",
-    "appIcon": "./icon.svg"
+    "appIcon": "public/icon.svg",
+    "screenshots": [
+      "screenshots/config.png"
+    ]
   },
   "author": "Jean-Laurent Girod",
   "license": "MIT",

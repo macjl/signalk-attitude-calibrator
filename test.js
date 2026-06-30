@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
 const packageJson = require('./package.json');
 const pluginFactory = require('./');
 
@@ -115,8 +116,24 @@ const schema = pluginFactory({
 
 assert.strictEqual(
   packageJson.signalk.appIcon,
-  './icon.svg',
-  'webapp icon should use the Signal K appIcon field relative to public/'
+  'public/icon.svg',
+  'app icon should use a package-relative path included in the npm tarball'
+);
+
+assert(
+  fs.existsSync(packageJson.signalk.appIcon),
+  'app icon path should exist in the package'
+);
+
+assert.deepStrictEqual(
+  packageJson.signalk.screenshots,
+  ['screenshots/config.png'],
+  'app store screenshots should be declared with package-relative paths'
+);
+
+assert(
+  packageJson.signalk.screenshots.every(path => fs.existsSync(path)),
+  'declared app store screenshots should exist in the package'
 );
 
 assert(
