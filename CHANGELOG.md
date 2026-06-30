@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.7.0] - 2026-06-30
+
+### Added
+- Add App Store screenshots for the plugin configuration panel and calibration webapp.
+
+### Changed
+- Preferred-source mode now subscribes with `excludeSelf: true` so Signal K servers that support it can keep this plugin out of the preferred-source cascade while calibrating `navigation.attitude`.
+- Keep all-source subscriptions for `All sources` and `Specific source` modes so non-preferred attitude sources can still be calibrated.
+- Refresh Signal K plugin CI and npm publish workflows.
+
+### Fixed
+- Package the declared Signal K app icon and screenshots so App Store metadata checks can find them in the npm tarball.
+
 ## [0.6.1] - 2026-05-19
 
 ### Fixed

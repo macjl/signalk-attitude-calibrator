@@ -4,7 +4,11 @@ SignalK plugin that applies fixed offsets (in radians) to `navigation.attitude` 
 
 The calibrated values are republished on `navigation.attitude` with the plugin as source, so both the original and calibrated values coexist in SignalK with distinct sources.
 
-A feedback loop guard prevents the plugin from processing its own output.
+A feedback loop guard prevents the plugin from processing its own output. On
+Signal K servers that support subscription `excludeSelf`, the preferred-source
+mode also asks the server to exclude this plugin from the preferred-source
+cascade so the original preferred attitude source can still be calibrated after
+the plugin republishes on the same path.
 
 ## Configuration
 
@@ -30,8 +34,14 @@ At each update received on `navigation.attitude`:
 Source mode controls the subscription:
 
 - `All sources`: subscribe with `sourcePolicy: 'all'`
-- `Preferred source only`: subscribe with `sourcePolicy: 'preferred'`
+- `Preferred source only`: subscribe with `sourcePolicy: 'preferred'` and `excludeSelf: true`
 - `Specific source`: subscribe with `sourcePolicy: 'all'`, then filter updates by `$source`
+
+`Specific source` keeps `sourcePolicy: 'all'` intentionally: the selected source
+may not be the Signal K preferred source. The plugin still ignores its own
+output manually, which preserves loop protection on older Signal K servers that
+do not understand `excludeSelf`; on those servers, preferred-source mode may not
+benefit from the server-side cascade exclusion.
 
 ## Units
 
