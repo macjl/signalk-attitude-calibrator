@@ -127,7 +127,7 @@ assert(
 
 assert.deepStrictEqual(
   packageJson.signalk.screenshots,
-  ['screenshots/config.png'],
+  ['screenshots/config.png', 'screenshots/webapp.png'],
   'app store screenshots should be declared with package-relative paths'
 );
 

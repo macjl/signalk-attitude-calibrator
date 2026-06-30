@@ -11,7 +11,8 @@
     "displayName": "Attitude Calibrator",
     "appIcon": "public/icon.svg",
     "screenshots": [
-      "screenshots/config.png"
+      "screenshots/config.png",
+      "screenshots/webapp.png"
     ]
   },
   "author": "Jean-Laurent Girod",
