@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.7.1] - 2026-07-01
+
+### Fixed
+- Declare the Signal K app icon at the mounted webapp root and include the same icon at the package root so both the Webapps list and App Store metadata checks resolve it.
+
 ## [0.7.0] - 2026-06-30
 
 ### Added
