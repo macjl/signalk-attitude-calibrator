@@ -117,12 +117,12 @@ const schema = pluginFactory({
 assert.strictEqual(
   packageJson.signalk.appIcon,
   'icon.svg',
-  'app icon should resolve from both the npm package root and the mounted webapp root'
+  'app icon should be relative to the mounted webapp root'
 );
 
 assert(
-  fs.existsSync(packageJson.signalk.appIcon),
-  'app icon path should exist in the package'
+  fs.existsSync('public/' + packageJson.signalk.appIcon),
+  'app icon should exist under public because Signal K mounts public as the webapp root'
 );
 
 assert.deepStrictEqual(
