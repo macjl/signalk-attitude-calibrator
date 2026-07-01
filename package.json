@@ -9,7 +9,7 @@
   ],
   "signalk": {
     "displayName": "Attitude Calibrator",
-    "appIcon": "public/icon.svg",
+    "appIcon": "icon.svg",
     "screenshots": [
       "screenshots/config.png",
       "screenshots/webapp.png"

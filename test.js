@@ -116,8 +116,8 @@ const schema = pluginFactory({
 
 assert.strictEqual(
   packageJson.signalk.appIcon,
-  'public/icon.svg',
-  'app icon should use a package-relative path included in the npm tarball'
+  'icon.svg',
+  'app icon should resolve from both the npm package root and the mounted webapp root'
 );
 
 assert(
